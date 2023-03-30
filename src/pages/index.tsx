@@ -2,14 +2,17 @@ import { SignInButton, SignOutButton, useUser } from "@clerk/nextjs";
 import { type NextPage } from "next";
 import Head from "next/head";
 import Link from "next/link";
-
+import Image from "next/image";
+import dayjs from "dayjs";
+import relativeTime from "dayjs/plugin/relativeTime";
+dayjs.extend(relativeTime)
 import { RouterOutputs, api } from "~/utils/api";
 const CreatePostWizard = () => {
   const user = useUser();
   if (!user) return null;
   return (
     <div className="flex gap-4 w-full" >
-      <img src={user.user?.profileImageUrl} alt="Profile pic" className="w-14 h-14 rounded-full" />
+      <Image src={user.user!.profileImageUrl} alt="Profile pic" className="rounded-full" width={56} height={56} />
       <input type="text" placeholder="Put Some Emoji!" className="bg-transparent grow outline-none" ></input>
     </div>
   )
@@ -18,12 +21,19 @@ type PostViewProps = RouterOutputs["posts"]["getAll"][number]
 const PostView = (props: PostViewProps) => {
   const { post, author } = props;
   return (
-    <div className="flex p-1" >
+    <div className="flex p-1 gap-4" >
       <div>
-        <img src={author.profileImageUrl} alt="Profile pic" className="w-14 h-14 rounded-full" />
+        <Image src={author.profileImageUrl} alt="Profile pic" className="rounded-full" width={56} height={56} />
       </div>
-      <div key={post.id} className="p-6">
-        {post.content}
+      <div key={post.id} className="flex flex-col ">
+        <div className="flex gap-2">
+          <div>{`@${author.username}`}</div>
+          <div> ' </div>
+          <div>{dayjs(post.createdAt).fromNow()}</div>
+        </div>
+        <div>
+          {post.content}
+        </div>
       </div>
     </div>
   )
@@ -31,7 +41,7 @@ const PostView = (props: PostViewProps) => {
 const Home: NextPage = () => {
   const { data: posts } = api.posts.getAll.useQuery()
   const user = useUser();
-  console.log(user);
+  // console.log(user);
 
   return (
     <>
