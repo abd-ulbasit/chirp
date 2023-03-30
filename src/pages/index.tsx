@@ -7,6 +7,7 @@ import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
 dayjs.extend(relativeTime)
 import { RouterOutputs, api } from "~/utils/api";
+import { Loading, LoadingPage } from "~/components/Loading";
 const CreatePostWizard = () => {
   const user = useUser();
   if (!user) return null;
@@ -27,8 +28,8 @@ const PostView = (props: PostViewProps) => {
       </div>
       <div key={post.id} className="flex flex-col ">
         <div className="flex gap-2">
-          <div>{`@${author.username}`}</div>
-          <div> ' </div>
+          <div>{`@${author.username ?? ""}`}</div>
+          <div>&apos;</div>
           <div>{dayjs(post.createdAt).fromNow()}</div>
         </div>
         <div>
@@ -38,11 +39,21 @@ const PostView = (props: PostViewProps) => {
     </div>
   )
 }
+const Feed = () => {
+  const { data: posts, isLoading: feedIsLoading } = api.posts.getAll.useQuery()
+  if (feedIsLoading) return <div>
+    <Loading></Loading>
+  </div>
+  return (
+    <div className="flex flex-col" >
+      {posts?.map((post) => <PostView {...post} key={post.post.id} />)}
+    </div>
+  )
+}
 const Home: NextPage = () => {
-  const { data: posts } = api.posts.getAll.useQuery()
-  const user = useUser();
+  const { isLoaded, isSignedIn } = useUser();
   // console.log(user);
-
+  if (!isLoaded) return <LoadingPage size={70}></LoadingPage>
   return (
     <>
       <Head>
@@ -53,12 +64,9 @@ const Home: NextPage = () => {
       <main className="flex justify-center h-screen">
         <div className="border-slate-200 border-x w-full md:max-w-3xl">
           <div className="border-b-slate-200 border-b p-2">
-
-            {user.isSignedIn ? <CreatePostWizard></CreatePostWizard> : <SignInButton></SignInButton>}
+            {isSignedIn ? <CreatePostWizard></CreatePostWizard> : <SignInButton></SignInButton>}
           </div>
-          <div className="flex flex-col" >
-            {posts?.map((post) => <PostView {...post} key={post.post.id} />)}
-          </div>
+          <Feed></Feed>
         </div>
       </main>
     </>
