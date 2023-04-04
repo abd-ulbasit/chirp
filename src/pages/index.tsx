@@ -7,13 +7,25 @@ import relativeTime from "dayjs/plugin/relativeTime";
 dayjs.extend(relativeTime)
 import { RouterOutputs, api } from "~/utils/api";
 import { Loading, LoadingPage } from "~/components/Loading";
+import { toast } from "react-hot-toast";
+import { useState } from "react";
 const CreatePostWizard = () => {
+  const [content, setContent] = useState("")
   const user = useUser();
   const ctx = api.useContext()
-  const { mutate: createPost } = api.posts.create.useMutation({
+  const { mutate: createPost, isLoading: isPosting } = api.posts.create.useMutation({
     onSuccess: async () => {
       await ctx.posts.getAll.invalidate();
+    },
+    onError: (e) => {
+      const errorMessage = e.data?.zodError?.fieldErrors.content;
+      if (errorMessage && errorMessage[0]) {
+        toast.error(errorMessage[0]);
+      } else {
+        toast.error("Failed to post! Please try again later.");
+      }
     }
+
   })
   if (!user) return null;
   const handleInputKeyPress = (e: React.KeyboardEvent<HTMLInputElement>) => {
@@ -25,7 +37,13 @@ const CreatePostWizard = () => {
   return (
     <div className="flex gap-4 w-full" >
       <Image src={user.user!.profileImageUrl} alt="Profile pic" className="rounded-full" width={56} height={56} />
-      <input type="text" placeholder="Put Some Emoji!" className="bg-transparent grow outline-none" onKeyDown={handleInputKeyPress} ></input>
+      <input type="text" placeholder="Put Some Emoji!" value={content} className="bg-transparent grow outline-none" onKeyDown={handleInputKeyPress}
+        onChange={(e) => setContent(e.currentTarget.value)} ></input>
+      {content != "" && !isPosting && <button onClick={() => { createPost({ content: content }); setContent("") }} >Post</button>}
+      {isPosting && <div className="flex justify-center items-center" >
+        <Loading size={30}></Loading>
+      </div>
+      }
     </div>
   )
 }
