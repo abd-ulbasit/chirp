@@ -22,7 +22,7 @@ type PostViewProps = RouterOutputs["posts"]["getAll"][number]
 const PostView = (props: PostViewProps) => {
   const { post, author } = props;
   return (
-    <div className="flex p-1 gap-4" >
+    <div className="flex px-1 py-3 gap-4 border border-slate-300" >
       <div>
         <Image src={author.profileImageUrl} alt="Profile pic" className="rounded-full" width={56} height={56} />
       </div>
@@ -32,7 +32,7 @@ const PostView = (props: PostViewProps) => {
           <div>&apos;</div>
           <div>{dayjs(post.createdAt).fromNow()}</div>
         </div>
-        <div>
+        <div className="text-2xl">
           {post.content}
         </div>
       </div>
@@ -41,12 +41,12 @@ const PostView = (props: PostViewProps) => {
 }
 const Feed = () => {
   const { data: posts, isLoading: feedIsLoading } = api.posts.getAll.useQuery()
-  if (feedIsLoading) return <div>
+  if (feedIsLoading) return <div className="flex w-full h-screen justify-center items-center " >
     <Loading></Loading>
   </div>
   return (
     <div className="flex flex-col" >
-      {posts?.map((post) => <PostView {...post} key={post.post.id} />)}
+      {[...posts!, ...posts!]?.map((post) => <PostView {...post} key={post.post.id} />)}
     </div>
   )
 }
