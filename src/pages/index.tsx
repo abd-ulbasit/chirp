@@ -11,8 +11,8 @@ const CreatePostWizard = () => {
   const user = useUser();
   const ctx = api.useContext()
   const { mutate: createPost } = api.posts.create.useMutation({
-    onSuccess: () => {
-      ctx.posts.getAll.invalidate();
+    onSuccess: async () => {
+      await ctx.posts.getAll.invalidate();
     }
   })
   if (!user) return null;
