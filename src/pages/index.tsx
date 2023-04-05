@@ -9,6 +9,7 @@ import { RouterOutputs, api } from "~/utils/api";
 import { Loading, LoadingPage } from "~/components/Loading";
 import { toast } from "react-hot-toast";
 import { useState } from "react";
+import Link from "next/link";
 const CreatePostWizard = () => {
   const [content, setContent] = useState("")
   const user = useUser();
@@ -57,12 +58,16 @@ const PostView = (props: PostViewProps) => {
       </div>
       <div key={post.id} className="flex flex-col ">
         <div className="flex gap-2">
-          <div>{`@${author.username ?? ""}`}</div>
+          <Link href={`/@${author.username}`}>
+            <div>{`@${author.username ?? ""}`}</div>
+          </Link>
           <div>&apos;</div>
           <div>{dayjs(post.createdAt).fromNow()}</div>
         </div>
         <div className="text-2xl">
-          {post.content}
+          <Link href={`/post/${post.id}`}>
+            {post.content}
+          </Link>
         </div>
       </div>
     </div>
