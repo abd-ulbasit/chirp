@@ -37,7 +37,7 @@ const CreatePostWizard = () => {
   }
   return (
     <div className="flex gap-4 w-full" >
-      <Image src={user.user!?.profileImageUrl ?? ""} alt="Profile pic" className="rounded-full" width={56} height={56} />
+      <Image src={user.user?.profileImageUrl ?? ""} alt="Profile pic" className="rounded-full" width={56} height={56} />
       <input type="text" placeholder="Put Some Emoji!" value={content} className="bg-transparent grow outline-none" onKeyDown={handleInputKeyPress}
         onChange={(e) => setContent(e.currentTarget.value)} ></input>
       {content != "" && !isPosting && <button onClick={() => { createPost({ content: content }); setContent(() => "") }} >Post</button>}
@@ -58,7 +58,7 @@ const PostView = (props: PostViewProps) => {
       </div>
       <div key={post.id} className="flex flex-col ">
         <div className="flex gap-2">
-          <Link href={`/@${author.username!}`}>
+          <Link href={`/@${author.username ?? ""}`}>
             <div>{`@${author.username ?? ""}`}</div>
           </Link>
           <div>&apos;</div>

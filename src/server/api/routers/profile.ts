@@ -35,7 +35,7 @@ export const profileRouter = createTRPCRouter({
     return users.map((user) => {
       return {
         params: {
-          username: user.username!,
+          username: user.username ?? "",
         },
       };
     });
