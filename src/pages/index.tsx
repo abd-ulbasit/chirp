@@ -1,11 +1,11 @@
-import { SignInButton, SignOutButton, useUser } from "@clerk/nextjs";
+import { SignInButton, useUser } from "@clerk/nextjs";
 import { type NextPage } from "next";
 import Head from "next/head";
 import Image from "next/image";
 import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
 dayjs.extend(relativeTime)
-import { RouterOutputs, api } from "~/utils/api";
+import { type RouterOutputs, api } from "~/utils/api";
 import { Loading, LoadingPage } from "~/components/Loading";
 import { toast } from "react-hot-toast";
 import { useState } from "react";
@@ -31,16 +31,16 @@ const CreatePostWizard = () => {
   if (!user) return null;
   const handleInputKeyPress = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === "Enter") {
-      createPost({ content: e.currentTarget.value })
-      e.currentTarget.value = "";
+      createPost({ content: content })
+      setContent(() => "")
     }
   }
   return (
     <div className="flex gap-4 w-full" >
-      <Image src={user.user!.profileImageUrl} alt="Profile pic" className="rounded-full" width={56} height={56} />
+      <Image src={user.user!?.profileImageUrl ?? ""} alt="Profile pic" className="rounded-full" width={56} height={56} />
       <input type="text" placeholder="Put Some Emoji!" value={content} className="bg-transparent grow outline-none" onKeyDown={handleInputKeyPress}
         onChange={(e) => setContent(e.currentTarget.value)} ></input>
-      {content != "" && !isPosting && <button onClick={() => { createPost({ content: content }); setContent("") }} >Post</button>}
+      {content != "" && !isPosting && <button onClick={() => { createPost({ content: content }); setContent(() => "") }} >Post</button>}
       {isPosting && <div className="flex justify-center items-center" >
         <Loading size={30}></Loading>
       </div>
@@ -58,7 +58,7 @@ const PostView = (props: PostViewProps) => {
       </div>
       <div key={post.id} className="flex flex-col ">
         <div className="flex gap-2">
-          <Link href={`/@${author.username}`}>
+          <Link href={`/@${author.username!}`}>
             <div>{`@${author.username ?? ""}`}</div>
           </Link>
           <div>&apos;</div>
