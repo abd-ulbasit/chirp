@@ -5,11 +5,10 @@ import Image from "next/image";
 import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
 dayjs.extend(relativeTime)
-import { type RouterOutputs, api } from "~/utils/api";
+import { api } from "~/utils/api";
 import { Loading, LoadingPage } from "~/components/Loading";
 import { toast } from "react-hot-toast";
 import { useState } from "react";
-import Link from "next/link";
 import { PageLayout } from "~/components/PageLayout";
 import { PostView } from "~/components/PostView";
 const CreatePostWizard = () => {

@@ -1,4 +1,4 @@
-import { GetStaticPaths, GetStaticPathsContext, GetStaticProps, GetStaticPropsContext, NextPage } from "next"
+import { GetStaticProps, type NextPage } from "next"
 import { LoadingPage } from "~/components/Loading"
 import { api } from "~/utils/api"
 import { createProxySSGHelpers } from "@trpc/react-query/ssg"
@@ -23,7 +23,7 @@ const ProfilePage: NextPage<{ username: string }> = ({ username }) => {
   return (
     <PageLayout>
       <div className={`relative  bg-slate-800 h-32  `} >
-        <div className={`absolute left-0 bottom-0 -mb-[60px] pl-8 `} ><Image src={user.profileImageUrl} alt={`${user.username}'s profile pic`} height={size} width={size} className="rounded-full border-4 border-black" /></div>
+        <div className={`absolute left-0 bottom-0 -mb-[60px] pl-8 `} ><Image src={user.profileImageUrl} alt={`${user.username ?? ""}'s profile pic`} height={size} width={size} className="rounded-full border-4 border-black" /></div>
 
         {/* <div className="w-full border-b border-slate-400 " ></div> */}
       </div>
