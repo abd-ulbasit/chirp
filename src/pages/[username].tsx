@@ -1,8 +1,7 @@
-import { GetStaticProps, type NextPage } from "next"
+import type { GetStaticProps, NextPage } from "next"
 import { LoadingPage } from "~/components/Loading"
 import { api } from "~/utils/api"
-import { createProxySSGHelpers } from "@trpc/react-query/ssg"
-import { appRouter } from "~/server/api/root"
+
 import { PageLayout } from "~/components/PageLayout"
 import Image from "next/image"
 const ProfileFeed = (props: { userId?: string }) => {
@@ -38,16 +37,12 @@ const ProfilePage: NextPage<{ username: string }> = ({ username }) => {
     // <UserProfile></UserProfile>
   )
 }
-import superjson from "superjson"
-import { prisma } from "~/server/db"
+
 import { PostView } from "~/components/PostView"
+import { generateSSGHelper } from "~/server/helpers/generateSSGHelper"
 export const getStaticProps: GetStaticProps = async (context) => {
-  const ssg = createProxySSGHelpers({
-    router: appRouter,
-    ctx: { prisma, userId: null },
-    transformer: superjson,
-  })
-  console.log("Params", context.params);
+  const ssg = generateSSGHelper()
+  // console.log("Params", context.params);
 
   const atusername = context.params?.username;
   if (typeof atusername !== "string") throw new Error("Invalid username");
