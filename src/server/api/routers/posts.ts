@@ -6,6 +6,7 @@ import { z } from "zod";
 import { Ratelimit } from "@upstash/ratelimit"; // for deno: see above
 import { Redis } from "@upstash/redis";
 import { filterForClient } from "~/server/helpers/filterUserForClient";
+import type { Post } from "@prisma/client";
 
 // Create a new ratelimiter, that allows 4 requests per 1 minute
 const ratelimit = new Ratelimit({
@@ -19,30 +20,44 @@ const ratelimit = new Ratelimit({
    */
   prefix: "@upstash/ratelimit",
 });
+const addUserDataToPosts = async (posts: Post[]) => {
+  const users = (
+    await clerkClient.users.getUserList({
+      limit: 100,
+      userId: posts.map((post) => post.authorId),
+    })
+  ).map(filterForClient);
+  return posts.map((post) => {
+    const author = users.find((user) => user.id === post.authorId);
+    if (!author)
+      throw new TRPCError({
+        code: "INTERNAL_SERVER_ERROR",
+        message: `Could not find author for post ${post.id}`,
+      });
+    return {
+      post,
+      author,
+    };
+  });
+};
 export const postRouter = createTRPCRouter({
   getAll: publicProcedure.query(async ({ ctx }) => {
     const posts = await ctx.prisma.post.findMany({
       orderBy: [{ createdAt: "desc" }],
     });
-    const users = (
-      await clerkClient.users.getUserList({
-        limit: 100,
-        userId: posts.map((post) => post.authorId),
-      })
-    ).map(filterForClient);
-    return posts.map((post) => {
-      const author = users.find((user) => user.id === post.authorId);
-      if (!author)
-        throw new TRPCError({
-          code: "INTERNAL_SERVER_ERROR",
-          message: `Could not find author for post ${post.id}`,
-        });
-      return {
-        post,
-        author,
-      };
-    });
+    return addUserDataToPosts(posts);
   }),
+  getPosts: publicProcedure
+    .input(z.object({ userId: z.string() }))
+    .query(async ({ ctx, input }) => {
+      return addUserDataToPosts(
+        await ctx.prisma.post.findMany({
+          where: { authorId: input.userId },
+          orderBy: [{ createdAt: "desc" }],
+          take: 100,
+        })
+      );
+    }),
   create: privateProcedure
     .input(
       z.object({
