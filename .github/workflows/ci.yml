@@ -20,7 +20,7 @@ jobs:
         run: pnpm install
 
       - name: Typecheck
-        run: pnpm run typecheck
+        run: pnpm run typechec2k
 
       - name: Lint
         run: pnpm run lint
