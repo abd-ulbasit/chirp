@@ -8,7 +8,7 @@ type PostViewProps = RouterOutputs["posts"]["getAll"][number]
 export const PostView = (props: PostViewProps) => {
     const { post, author } = props;
     return (
-        <div className="flex px-1 py-3 gap-4 border border-slate-300" >
+        <div className="card flex-row px-1 py-3 gap-4 border border-slate-300" >
             <div>
                 <Image src={author.profileImageUrl} alt="Profile pic" className="rounded-full" width={56} height={56} />
             </div>

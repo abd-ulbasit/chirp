@@ -41,7 +41,7 @@ const CreatePostWizard = () => {
       <Image src={user.user?.profileImageUrl ?? ""} alt="Profile pic" className="rounded-full" width={56} height={56} />
       <input type="text" placeholder="Put Some Emoji!" value={content} className="bg-transparent grow outline-none" onKeyDown={handleInputKeyPress}
         onChange={(e) => setContent(e.currentTarget.value)} ></input>
-      {content != "" && !isPosting && <button onClick={() => { createPost({ content: content }); setContent(() => "") }} >Post</button>}
+      {content != "" && !isPosting && <button className="btn" onClick={() => { createPost({ content: content }); setContent(() => "") }} >Post</button>}
       {isPosting && <div className="flex justify-center items-center" >
         <Loading size={30}></Loading>
       </div>
@@ -55,7 +55,7 @@ const Feed = () => {
     <Loading></Loading>
   </div>
   return (
-    <div className="flex flex-col" >
+    <div className="flex flex-col gap-2" >
       {posts?.map((post) => <PostView {...post} key={post.post.id} />)}
     </div>
   )
@@ -73,7 +73,7 @@ const Home: NextPage = () => {
       </Head>
       <PageLayout>
 
-        <div className="border-b-slate-200 border-b p-2">
+        <div className="p-2 py-4">
           {isSignedIn ? <CreatePostWizard></CreatePostWizard> : <SignInButton></SignInButton>}
         </div>
         <Feed></Feed>

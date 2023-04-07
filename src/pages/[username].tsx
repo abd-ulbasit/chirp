@@ -10,7 +10,7 @@ const ProfileFeed = (props: { userId?: string }) => {
   if (!posts && !LoadingPage) return <div>No Post to View</div>
   if (LoadingPosts) return <LoadingPage></LoadingPage>
   return (
-    <div className="flex flex-col" >
+    <div className="flex flex-col gap-2" >
       {posts?.map((post) => <PostView {...post} key={post.post.id} ></PostView>)}
     </div>
   )
