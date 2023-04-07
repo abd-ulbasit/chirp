@@ -5,16 +5,16 @@ import { api } from "~/utils/api";
 import "~/styles/globals.css";
 import { ClerkProvider } from "@clerk/nextjs";
 import { Toaster } from "react-hot-toast";
-import { ThemeProvider } from "next-themes";
+import { ThemeProvider, useTheme } from "next-themes";
 
 const MyApp: AppType = ({ Component, pageProps }) => {
 
   return (
-    <ThemeProvider defaultTheme="cyberpunk" >
-
+    <ThemeProvider defaultTheme="garden" >
       <ClerkProvider {...pageProps} >
         <Toaster position="top-right" />
         <Component {...pageProps} />
+        {/* <ThemeChanger></ThemeChanger> */}
       </ClerkProvider>
     </ThemeProvider>
   );
