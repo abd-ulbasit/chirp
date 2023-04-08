@@ -21,7 +21,7 @@ const ProfilePage: NextPage<{ username: string }> = ({ username }) => {
   const size = 120;
   return (
     <PageLayout>
-      <div className={`relative  bg-slate-800 h-32  `} >
+      <div className={`relative  h-32  bg-neutral-content`} >
         <div className={`absolute left-0 bottom-0 -mb-[60px] pl-8 `} ><Image src={user.profileImageUrl} alt={`${user.username ?? ""}'s profile pic`} height={size} width={size} className="rounded-full border-4 border-black" /></div>
 
         {/* <div className="w-full border-b border-slate-400 " ></div> */}

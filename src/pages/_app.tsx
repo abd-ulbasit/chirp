@@ -5,12 +5,12 @@ import { api } from "~/utils/api";
 import "~/styles/globals.css";
 import { ClerkProvider } from "@clerk/nextjs";
 import { Toaster } from "react-hot-toast";
-import { ThemeProvider, useTheme } from "next-themes";
+import { ThemeProvider } from "next-themes";
 
 const MyApp: AppType = ({ Component, pageProps }) => {
 
   return (
-    <ThemeProvider defaultTheme="garden" >
+    <ThemeProvider defaultTheme="light" >
       <ClerkProvider {...pageProps} >
         <Toaster position="top-right" />
         <Component {...pageProps} />

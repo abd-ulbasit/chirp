@@ -82,5 +82,17 @@ const Home: NextPage = () => {
     </>
   );
 };
-
+// export const getStaticProps = () => {
+//   return {
+//     props: {
+//       // props for your component
+//     },
+//   }
+// }
+// export const getStaticPaths = () => {
+//   return {
+//     paths: [],
+//     fallback: true,
+//   }
+// }
 export default Home;

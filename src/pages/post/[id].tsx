@@ -34,11 +34,12 @@ export const getStaticProps: GetStaticProps = async (context) => {
   }
 }
 export const getStaticPaths = () => {
+  // ! TODO: Implement this : when we have a way to get all post ids
   // const { data: params } = await api.posts.getAllIds.useQuery()
   // const paths = params?.map((id) => ({ params: { id } })) ?? []
   return {
     paths: [],
-    fallback: true
+    fallback: false
   }
 }
 export default SinglePostPage

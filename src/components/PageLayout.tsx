@@ -1,9 +1,14 @@
 import 'tailwindcss/tailwind.css'
 import { useTheme } from "next-themes";
-import type { PropsWithChildren } from "react";
+import { useEffect, type PropsWithChildren, useState } from "react";
 
 const ThemeChanger = () => {
+    // This is a hack to prevent the hydration mismatch Error
+    const [mounted, setMounted] = useState(false);
     const { theme, setTheme } = useTheme()
+    useEffect(() => setMounted(true), [])
+    if (!mounted) return null;
+
     // const themes = ["light", "dark", "cupcake", "bumblebee", "emerald", "corporate", "synthwave", "retro", "cyberpunk", "valentine", "halloween", "garden", "forest", "aqua", "lofi", "pastel", "fantasy", "wireframe", "black", "luxury", "dracula", "cmyk", "autumn", "business", "acid", "lemonade", "night", "coffee", "winter"];
     const themes = ["light", "dark", "cupcake", "bumblebee", "emerald", "corporate", "synthwave", "retro", "cyberpunk", "valentine", "halloween", "garden", "forest", "aqua"]
     const handleThemeSelect = (theme: string) => {
@@ -13,7 +18,7 @@ const ThemeChanger = () => {
     return (
 
         <div className="dropdown dropdown-end dropdown-hover hidden sm:block " id='dropdown' >
-            <label tabIndex={0} className="btn  capitalize w-48">Theme : {theme}</label>
+            <label tabIndex={0} className="btn  capitalize w-48">Theme : {theme ?? ""}</label>
             <ul tabIndex={0} className="dropdown-content menu p-1 shadow bg-base-100 rounded-box w-48">
                 <div className='flex gap-2 flex-col  '  >
                     {themes.map((theme) =>
