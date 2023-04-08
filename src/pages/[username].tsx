@@ -6,12 +6,12 @@ import { PageLayout } from "~/components/PageLayout"
 import Image from "next/image"
 const ProfileFeed = (props: { userId?: string }) => {
 
-  const { data: posts, isLoading: LoadingPosts } = api.posts.getPosts.useQuery({ userId: props.userId ?? "" })
-  if (!posts && !LoadingPage) return <div>No Post to View</div>
-  if (LoadingPosts) return <LoadingPage></LoadingPage>
+  const { data: tweets, isLoading: LoadingTweets } = api.tweet.getTweetsByAuthor.useQuery({ userId: props.userId ?? "" })
+  if (!tweets && !LoadingPage) return <div>No Tweet to View</div>
+  if (LoadingTweets) return <LoadingPage></LoadingPage>
   return (
     <div className="flex flex-col gap-2" >
-      {posts?.map((post) => <PostView {...post} key={post.post.id} ></PostView>)}
+      {tweets?.map((tweet) => <Tweet {...tweet} key={tweet.tweet.id} ></Tweet>)}
     </div>
   )
 }
@@ -38,7 +38,7 @@ const ProfilePage: NextPage<{ username: string }> = ({ username }) => {
   )
 }
 
-import { PostView } from "~/components/PostView"
+import { Tweet } from "~/components/Tweet"
 import { generateSSGHelper } from "~/server/helpers/generateSSGHelper"
 export const getStaticProps: GetStaticProps = async (context) => {
   const ssg = generateSSGHelper()

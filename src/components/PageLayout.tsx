@@ -1,6 +1,7 @@
 import 'tailwindcss/tailwind.css'
 import { useTheme } from "next-themes";
 import { useEffect, type PropsWithChildren, useState } from "react";
+import { SignInButton, SignOutButton, useUser } from '@clerk/nextjs';
 
 const ThemeChanger = () => {
     // This is a hack to prevent the hydration mismatch Error
@@ -37,6 +38,7 @@ const ThemeChanger = () => {
 
 
 export const PageLayout = (props: PropsWithChildren) => {
+    const { isSignedIn } = useUser()
 
     return (
 
@@ -44,6 +46,11 @@ export const PageLayout = (props: PropsWithChildren) => {
             <div className="w-full md:max-w-3xl">{props.children}</div>
             <div className='fixed right-3 top-3' >
                 <ThemeChanger></ThemeChanger>
+            </div>
+            <div className='btn top-3 left-4 fixed' >{isSignedIn ?
+                <SignOutButton>LogOut</SignOutButton> :
+                <SignInButton  >LogIn</SignInButton>
+            }
             </div>
         </main>
     )

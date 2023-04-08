@@ -1,4 +1,4 @@
-import { SignInButton, useUser } from "@clerk/nextjs";
+import { useUser } from "@clerk/nextjs";
 import { type NextPage } from "next";
 import Head from "next/head";
 import Image from "next/image";
@@ -10,21 +10,21 @@ import { Loading, LoadingPage } from "~/components/Loading";
 import { toast } from "react-hot-toast";
 import { useState } from "react";
 import { PageLayout } from "~/components/PageLayout";
-import { PostView } from "~/components/PostView";
-const CreatePostWizard = () => {
+import { Tweet } from "~/components/Tweet";
+const CreateTweetWizard = () => {
   const [content, setContent] = useState("")
   const user = useUser();
   const ctx = api.useContext()
-  const { mutate: createPost, isLoading: isPosting } = api.posts.create.useMutation({
+  const { mutate: createTweet, isLoading: isTweeting } = api.tweet.create.useMutation({
     onSuccess: async () => {
-      await ctx.posts.getAll.invalidate();
+      await ctx.tweet.getAll.invalidate();
     },
     onError: (e) => {
       const errorMessage = e.data?.zodError?.fieldErrors.content;
       if (errorMessage && errorMessage[0]) {
         toast.error(errorMessage[0]);
       } else {
-        toast.error("Failed to post! Please try again later.");
+        toast.error("Failed to Tweet! Please try again later.");
       }
     }
 
@@ -32,7 +32,7 @@ const CreatePostWizard = () => {
   if (!user) return null;
   const handleInputKeyPress = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === "Enter") {
-      createPost({ content: content })
+      createTweet({ content: content })
       setContent(() => "")
     }
   }
@@ -41,8 +41,8 @@ const CreatePostWizard = () => {
       <Image src={user.user?.profileImageUrl ?? ""} alt="Profile pic" className="rounded-full" width={56} height={56} />
       <input type="text" placeholder="Put Some Emoji!" value={content} className="bg-transparent grow outline-none" onKeyDown={handleInputKeyPress}
         onChange={(e) => setContent(e.currentTarget.value)} ></input>
-      {content != "" && !isPosting && <button className="btn" onClick={() => { createPost({ content: content }); setContent(() => "") }} >Post</button>}
-      {isPosting && <div className="flex justify-center items-center" >
+      {content != "" && !isTweeting && <button className="btn" onClick={() => { createTweet({ content: content }); setContent(() => "") }} >Tweet</button>}
+      {isTweeting && <div className="flex justify-center items-center" >
         <Loading size={30}></Loading>
       </div>
       }
@@ -50,13 +50,14 @@ const CreatePostWizard = () => {
   )
 }
 const Feed = () => {
-  const { data: posts, isLoading: feedIsLoading } = api.posts.getAll.useQuery()
+  const { data: tweets, isLoading: feedIsLoading } = api.tweet.getAll.useQuery()
   if (feedIsLoading) return <div className="flex w-full h-screen justify-center items-center " >
     <Loading></Loading>
   </div>
+  if (!tweets) return <div className="text-center" >No Tweets</div>
   return (
     <div className="flex flex-col gap-2" >
-      {posts?.map((post) => <PostView {...post} key={post.post.id} />)}
+      {tweets?.map((tweet) => <Tweet {...tweet} key={tweet.tweet.id} />)}
     </div>
   )
 }
@@ -74,7 +75,7 @@ const Home: NextPage = () => {
       <PageLayout>
 
         <div className="p-2 py-4">
-          {isSignedIn ? <CreatePostWizard></CreatePostWizard> : <SignInButton></SignInButton>}
+          {isSignedIn ? <CreateTweetWizard></CreateTweetWizard> : null}
         </div>
         <Feed></Feed>
       </PageLayout>

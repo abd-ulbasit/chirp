@@ -1,12 +1,12 @@
 import { clerkClient } from "@clerk/nextjs/server";
-import { createTRPCRouter, privateProcedure, publicProcedure } from "./../trpc";
+import { createTRPCRouter, privateProcedure, publicProcedure } from "../trpc";
 import { TRPCError } from "@trpc/server";
 import { z } from "zod";
 
 import { Ratelimit } from "@upstash/ratelimit"; // for deno: see above
 import { Redis } from "@upstash/redis";
 import { filterForClient } from "~/server/helpers/filterUserForClient";
-import type { Post } from "@prisma/client";
+import type { Tweet } from "@prisma/client";
 
 // Create a new ratelimiter, that allows 4 requests per 1 minute
 const ratelimit = new Ratelimit({
@@ -20,47 +20,47 @@ const ratelimit = new Ratelimit({
    */
   prefix: "@upstash/ratelimit",
 });
-const addUserDataToPosts = async (posts: Post[]) => {
+const addUserDataToTweets = async (tweets: Tweet[]) => {
   const users = (
     await clerkClient.users.getUserList({
       limit: 100,
-      userId: posts.map((post) => post.authorId),
+      userId: tweets.map((tweet) => tweet.authorId),
     })
   ).map(filterForClient);
-  return posts.map((post) => {
-    const author = users.find((user) => user.id === post.authorId);
+  return tweets.map((tweet) => {
+    const author = users.find((user) => user.id === tweet.authorId);
     if (!author)
       throw new TRPCError({
         code: "INTERNAL_SERVER_ERROR",
-        message: `Could not find author for post ${post.id}`,
+        message: `Could not find author for tweet ${tweet.id}`,
       });
     return {
-      post,
+      tweet: tweet,
       author,
     };
   });
 };
-export const postRouter = createTRPCRouter({
-  getbyId: publicProcedure
+export const tweetRouter = createTRPCRouter({
+  getbyTweetId: publicProcedure
     .input(z.object({ id: z.string() }))
     .query(async ({ ctx, input }) => {
-      const post = await ctx.prisma.post.findUnique({
+      const tweet = await ctx.prisma.tweet.findUnique({
         where: { id: input.id },
       });
-      if (!post) throw new TRPCError({ code: "NOT_FOUND" });
-      return (await addUserDataToPosts([post]))[0];
+      if (!tweet) throw new TRPCError({ code: "NOT_FOUND" });
+      return (await addUserDataToTweets([tweet]))[0];
     }),
   getAll: publicProcedure.query(async ({ ctx }) => {
-    const posts = await ctx.prisma.post.findMany({
+    const tweets = await ctx.prisma.tweet.findMany({
       orderBy: [{ createdAt: "desc" }],
     });
-    return addUserDataToPosts(posts);
+    return addUserDataToTweets(tweets);
   }),
-  getPosts: publicProcedure
+  getTweetsByAuthor: publicProcedure
     .input(z.object({ userId: z.string() }))
     .query(async ({ ctx, input }) => {
-      return addUserDataToPosts(
-        await ctx.prisma.post.findMany({
+      return addUserDataToTweets(
+        await ctx.prisma.tweet.findMany({
           where: { authorId: input.userId },
           orderBy: [{ createdAt: "desc" }],
           take: 100,
@@ -76,12 +76,12 @@ export const postRouter = createTRPCRouter({
     .mutation(async ({ ctx, input }) => {
       const { success } = await ratelimit.limit(ctx.userId);
       if (!success) throw new TRPCError({ code: "TOO_MANY_REQUESTS" });
-      const post = await ctx.prisma.post.create({
+      const tweet = await ctx.prisma.tweet.create({
         data: {
           content: input.content,
           authorId: ctx.userId,
         },
       });
-      return post;
+      return tweet;
     }),
 });

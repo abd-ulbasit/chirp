@@ -1,21 +1,21 @@
 import type { GetStaticProps, NextPage } from "next"
 import Head from "next/head"
 import { PageLayout } from "~/components/PageLayout"
-import { PostView } from "~/components/PostView"
+import { Tweet as Tweet } from "~/components/Tweet"
 import { generateSSGHelper } from "~/server/helpers/generateSSGHelper"
 import { api } from "~/utils/api"
 
-const SinglePostPage: NextPage<{ id: string }> = ({ id }) => {
-  const { data: post, isLoading: loadingPost } = api.posts.getbyId.useQuery({ id })
-  if (loadingPost) return <div>Loading</div>
-  if (!post) return <div>404</div>
+const SingleTweetPage: NextPage<{ id: string }> = ({ id }) => {
+  const { data: tweet, isLoading: loadingTweet } = api.tweet.getbyTweetId.useQuery({ id })
+  if (loadingTweet) return <div>Loading</div>
+  if (!tweet) return <div>404</div>
   return (
     <>
       <Head>
-        <title>{`${post.post.content} - ${post.author.username ?? ""}`}</title>
+        <title>{`${tweet.tweet.content} - ${tweet.author.username ?? ""}`}</title>
       </Head>
       <PageLayout>
-        <PostView {...post} key={post?.post.id ?? ""}></PostView>
+        <Tweet {...tweet} key={tweet?.tweet.id ?? ""}></Tweet>
       </PageLayout>
     </>
   )
@@ -25,7 +25,7 @@ export const getStaticProps: GetStaticProps = async (context) => {
   const ssg = generateSSGHelper();
   const id = context.params?.id;
   if (typeof id !== "string") throw new Error("Invalid id");
-  await ssg.posts.getbyId.prefetch({ id });
+  await ssg.tweet.getbyTweetId.prefetch({ id });
   return {
     props: {
       trpcState: ssg.dehydrate(),
@@ -34,12 +34,12 @@ export const getStaticProps: GetStaticProps = async (context) => {
   }
 }
 export const getStaticPaths = () => {
-  // ! TODO: Implement this : when we have a way to get all post ids
-  // const { data: params } = await api.posts.getAllIds.useQuery()
+  // ! TODO: Implement this : when we have a way to get all tweets ids
+  // const { data: params } = await api.tweet.getAllIds.useQuery()
   // const paths = params?.map((id) => ({ params: { id } })) ?? []
   return {
     paths: [],
     fallback: false
   }
 }
-export default SinglePostPage
+export default SingleTweetPage
