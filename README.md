@@ -5,7 +5,7 @@
 - [x] User Authentication
 - [x] User Profiles
 - [x] User Tweets
-- [ ] Enhanced User Interface
+- [x] Enhanced User Interface
 - [ ] User Replies
 - [ ] User Retweets
 - [ ] User Follows
@@ -35,11 +35,10 @@ And A lot of other cool opensource libraries and tools.
 - Clone the repo
 - Install dependencies with `pnpm`
 - Create a `.env` file with the following variables:
-  - `NEXT_PUBLIC_CLERK_FRONTEND_API`
-  - `CLERK_API_KEY`
-  - `CLERK_API_SECRET`
-  - `UPSTASH_API_KEY`
-  - `UPSTASH_API_SECRET`
   - `DATABASE_URL`
+  - `NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY`
+  - `CLERK_SECRET_KEY`
+  - `UPSTASH_REDIS_REST_URL`
+  - `UPSTASH_REDIS_REST_TOKEN`
 - Run `pnpm dev` to start the development server
 - Run `pnpm build` to build the app for production
