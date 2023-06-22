@@ -3,6 +3,7 @@ import { useTheme } from "next-themes";
 import { useEffect, type PropsWithChildren, useState } from "react";
 import { SignInButton, SignOutButton, useUser } from '@clerk/nextjs';
 import Image from 'next/image';
+import Link from 'next/link';
 const ThemeChanger = () => {
     // This is a hack to prevent the hydration mismatch Error
     const [mounted, setMounted] = useState(false);
@@ -43,9 +44,9 @@ export const PageLayout = (props: PropsWithChildren) => {
     return (
 
         <main className="">
-            <div className="navbar bg-base-100 fixed">
+            <div className="navbar bg-base-100 fixed z-10">
                 <div className="flex-1">
-                    <a className="btn btn-ghost normal-case text-xl">daisyUI</a>
+                    <Link href={"/"} className="btn btn-ghost normal-case text-xl">Twitter</Link>
                 </div>
                 <div className="flex-none">
                     <ThemeChanger></ThemeChanger>
