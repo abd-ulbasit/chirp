@@ -20,7 +20,7 @@ export const Tweet = (props: TweetProps) => {
                     <div>&apos;</div>
                     <div>{dayjs(tweet.createdAt).fromNow()}</div>
                 </div>
-                <div className="text-2xl">
+                <div className="">
                     <Link href={`/tweet/${tweet.id}`}>
                         {tweet.content}
                     </Link>

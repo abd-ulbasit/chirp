@@ -3,7 +3,7 @@ import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 
 export default withClerkMiddleware((_req: NextRequest) => {
-  console.log("MiddleWare Running");
+  // console.log("MiddleWare Running");
 
   return NextResponse.next();
 });

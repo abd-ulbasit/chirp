@@ -70,7 +70,7 @@ export const tweetRouter = createTRPCRouter({
   create: privateProcedure
     .input(
       z.object({
-        content: z.string().emoji().min(1).max(30),
+        content: z.string().min(1).max(255),
       })
     )
     .mutation(async ({ ctx, input }) => {
