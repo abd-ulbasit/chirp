@@ -2,7 +2,7 @@ import 'tailwindcss/tailwind.css'
 import { useTheme } from "next-themes";
 import { useEffect, type PropsWithChildren, useState } from "react";
 import { SignInButton, SignOutButton, useUser } from '@clerk/nextjs';
-
+import Image from 'next/image';
 const ThemeChanger = () => {
     // This is a hack to prevent the hydration mismatch Error
     const [mounted, setMounted] = useState(false);
@@ -38,20 +38,35 @@ const ThemeChanger = () => {
 
 
 export const PageLayout = (props: PropsWithChildren) => {
-    const { isSignedIn } = useUser()
+    const { isSignedIn, user } = useUser()
 
     return (
 
-        <main className="flex justify-center relative">
-            <div className="w-full md:max-w-3xl">{props.children}</div>
-            <div className='fixed right-3 top-3' >
-                <ThemeChanger></ThemeChanger>
+        <main className="">
+            <div className="navbar bg-base-100 fixed">
+                <div className="flex-1">
+                    <a className="btn btn-ghost normal-case text-xl">daisyUI</a>
+                </div>
+                <div className="flex-none">
+                    <ThemeChanger></ThemeChanger>
+                    <div className="dropdown dropdown-end">
+                        <label tabIndex={0} className="btn btn-ghost btn-circle avatar">
+                            <div className="w-10 rounded-full">
+                                <Image src={user?.profileImageUrl ?? ""} alt={user?.username ?? ""} width={40} height={40} />
+                            </div>
+                        </label>
+                        <ul tabIndex={0} className="menu menu-sm dropdown-content mt-3 z-[1] p-2 shadow bg-base-100 rounded-box w-52">
+
+                            <li>{isSignedIn ?
+                                <SignOutButton>LogOut</SignOutButton> :
+                                <SignInButton  >LogIn</SignInButton>}
+                            </li>
+
+                        </ul>
+                    </div>
+                </div>
             </div>
-            <div className='btn top-3 left-4 fixed' >{isSignedIn ?
-                <SignOutButton>LogOut</SignOutButton> :
-                <SignInButton  >LogIn</SignInButton>
-            }
-            </div>
+            <div className="w-full md:max-w-3xl pt-20 border mx-auto">{props.children}</div>
         </main>
     )
 }
