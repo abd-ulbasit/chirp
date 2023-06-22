@@ -42,6 +42,10 @@ export const Tweet = (props: TweetProps) => {
                 <button className=" btn btn-circle btn-outline" disabled={deleteTweet.isLoading} onClick={() => handleDeleteTweet(tweet.id)} >{<AiOutlineDelete></AiOutlineDelete>}</button>
 
             }
-        </div>
+            {tweet.authorId !== session.session?.user?.id && session.isSignedIn &&
+                <button className="btn btn-circle" >R</button>
+
+            }
+        </div >
     )
 }
