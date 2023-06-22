@@ -84,4 +84,16 @@ export const tweetRouter = createTRPCRouter({
       });
       return tweet;
     }),
+  delete: privateProcedure
+    .input(z.object({ id: z.string() }))
+    .mutation(async ({ ctx, input }) => {
+      const tweet = await ctx.prisma.tweet.findUnique({
+        where: { id: input.id },
+      });
+      if (!tweet) throw new TRPCError({ code: "NOT_FOUND" });
+      if (tweet.authorId !== ctx.userId)
+        throw new TRPCError({ code: "FORBIDDEN" });
+      await ctx.prisma.tweet.delete({ where: { id: input.id } });
+      return tweet;
+    }),
 });
