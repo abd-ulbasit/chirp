@@ -12,10 +12,24 @@ datasource db {
 }
 
 model Tweet {
-    id        String   @id @default(cuid())
-    createdAt DateTime @default(now())
-    content   String   @db.VarChar(255)
+    id        String    @id @default(cuid())
+    createdAt DateTime  @default(now())
+    content   String    @db.VarChar(255)
     authorId  String
+    retweets  Retweet[]
 
     @@index([authorId])
+}
+
+model Retweet {
+    id              String   @id @default(cuid())
+    createdAt       DateTime @default(now())
+    comment         String   @db.VarChar(255)
+    authorId        String
+    originaltweetId String
+    tweet           Tweet    @relation(fields: [originaltweetId], references: [id])
+
+    @@index([authorId])
+    @@index([originaltweetId])
+    @@map("retweets")
 }
