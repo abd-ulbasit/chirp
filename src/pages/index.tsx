@@ -39,7 +39,7 @@ const CreateTweetWizard = () => {
   return (
     <div className="flex gap-4 w-full" >
       <Image src={user.user?.profileImageUrl ?? ""} alt="Profile pic" className="rounded-full" width={56} height={56} />
-      <input type="text" placeholder="Put Some Emoji!" value={content} className="bg-transparent grow outline-none" onKeyDown={handleInputKeyPress}
+      <input type="text" placeholder="Have something on mind?" value={content} className="bg-transparent grow outline-none" onKeyDown={handleInputKeyPress}
         onChange={(e) => setContent(e.currentTarget.value)} ></input>
       {content != "" && !isTweeting && <button className="btn" onClick={() => { createTweet({ content: content }); setContent(() => "") }} >Tweet</button>}
       {isTweeting && <div className="flex justify-center items-center" >
